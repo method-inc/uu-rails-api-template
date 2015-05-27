@@ -16,6 +16,10 @@ A `Dockerfile` and `docker-compose.yml` are included in the generated app.
 
     rails new service_name -m <path-to>/rails-api-template.rb
 
+or 
+
+    rails-api new service_name -m <path-to>/rails-api-template.rb
+
 Once the app exists
 
     cd service_name
