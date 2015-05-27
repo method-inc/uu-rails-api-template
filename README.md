@@ -27,6 +27,7 @@ And then you can:
 or 
 
     docker-compose up
+    docker-compose run api rake db:create # The first time
 
 And you should be good to go. (Presuming you have boot2docker or docker installed)
 
