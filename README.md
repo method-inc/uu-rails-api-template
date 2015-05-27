@@ -14,7 +14,7 @@ A `Dockerfile` and `docker-compose.yml` are included in the generated app.
 
 ## How to Use
 
-    rails new service_name -m rails-api-template.rb
+    rails new service_name -m <path-to>/rails-api-template.rb
 
 Once the app exists
 
@@ -29,3 +29,7 @@ or
     docker-compose up
 
 And you should be good to go. (Presuming you have boot2docker or docker installed)
+
+## Gotchas
+
+* You'll need to clone this repository to use it, since I decided to use local files to copy over. This could be fixed by included the file content in the template.
