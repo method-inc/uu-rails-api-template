@@ -3,7 +3,7 @@
 This template removes the Railties and gems that don't make sense for an 
 API-only application. It also adds the following gems:
 
-* Rspec, Guard, Pry (byebug), SimpleCov
+* Rspec, Guard, Pry (byebug), SimpleCov, Mutant
 * Puma
 * roar-rails
 
@@ -31,6 +31,13 @@ or
 
 And you should be good to go. (Presuming you have boot2docker or docker installed)
 
+## Mutant Testing
+The [mutant](https://github.com/mbj/mutant) is included to enable mutation testing. 
+
 ## Gotchas
 
 * You'll need to clone this repository to use it, since I decided to use local files to copy over. This could be fixed by included the file content in the template.
+
+
+## TODO
+* Document mutation testing command/flow

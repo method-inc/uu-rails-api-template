@@ -25,6 +25,8 @@ gem_group :test do
   gem 'simplecov', require: false
   gem 'simplecov-rcov', :require => false
   gem 'guard-rspec'
+  gem 'mutant'
+  gem 'mutant-rspec'
 end
 
 copy_file "Dockerfile"
