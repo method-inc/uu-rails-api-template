@@ -18,6 +18,7 @@ gem_group :development, :test do
   gem 'spring'
   gem 'pry-rails'
   gem 'web-console', '~> 2.0'
+  gem 'prmd'
 end
 
 gem_group :test do
@@ -39,6 +40,46 @@ inside 'config' do
   copy_file 'database.yml'
 end
 
+create_file 'schema/meta.json' do <<-EOF
+{
+"description": "Ervice",
+"id":"service-uu",
+"links": [{
+"href" : "https://api.esalrugs.com",
+"rel" : "self"
+}],
+"title" : "UU Service"
+}
+EOF
+end
+
+empty_directory "schema/schemata"
+
+rakefile("schema.rake") do <<-EOF
+require 'prmd/rake_tasks/combine'
+require 'prmd/rake_tasks/verify'
+require 'prmd/rake_tasks/doc'
+
+namespace :schema do
+    Prmd::RakeTasks::Combine.new do |t|
+      t.options[:meta] = 'schema/meta.json'    
+      # use meta.yml if you prefer YAML format
+      t.paths << 'schema/schemata'
+      t.output_file = 'schema/api.json'
+    end
+
+    Prmd::RakeTasks::Verify.new do |t|
+      t.files << 'schema/api.json'
+    end
+
+    Prmd::RakeTasks::Doc.new do |t|
+      t.files = { 'schema/api.json' => 'schema/api.md' }
+    end
+  task default: ['schema:combine', 'schema:verify', 'schema:doc']
+end
+EOF
+end
+
 after_bundle do
   remove_dir "app/views"
   remove_dir "app/mailers"
@@ -47,7 +88,7 @@ after_bundle do
   insert_into_file 'config/application.rb', after: "require 'rails/all'\n" do <<-RUBY
 require "active_record/railtie"
 require "action_controller/railtie"
-RUBY
+  RUBY
   end
 
   gsub_file 'config/application.rb', /require 'rails\/all'/, '# require "rails/all"'
@@ -58,7 +99,7 @@ RUBY
       g.view_specs false
       g.helper_specs false
     end
-RUBY
+  RUBY
   end
 
   gsub_file 'config/environments/development.rb', /action_mailer/, ''

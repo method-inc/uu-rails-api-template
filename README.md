@@ -35,6 +35,11 @@ or
 
 And you should be good to go. (Presuming you have boot2docker or docker installed)
 
+## JSON Schema and API Docs
+The [`prmd`](https://github.com/interagent/prmd) is included in the dev environment. It is used to help create JSON Schema for the API. This schema is then used to validate JSON sent to/from the API, as well as generate docs.
+
+Add the .yml files for each API resource into schema/schemata, then call `rake schema:combine`. To generate markdown, `rake schema:doc`
+
 ## Mutant Testing
 The [mutant](https://github.com/mbj/mutant) is included to enable mutation testing. 
 
