@@ -40,6 +40,9 @@ The [`prmd`](https://github.com/interagent/prmd) is included in the dev environm
 
 Add the .yml files for each API resource into schema/schemata, then call `rake schema:combine`. To generate markdown, `rake schema:doc`
 
+## Routes
+This template adds a `/heath`  route that points to `health#index`. This is the health check endpoint that should make sure dependent servics are responding, etc. It's also known as a [canary endpoint](http://byterot.blogspot.com/2014/11/health-endpoint-in-api-design-slippery-rest-api-design-canary-endpoint-hysterix-asp-net-web-api.html). It should return JSON and be secured with an API token.
+
 ## Mutant Testing
 The [mutant](https://github.com/mbj/mutant) is included to enable mutation testing. 
 

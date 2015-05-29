@@ -19,10 +19,10 @@ gem_group :development, :test do
   gem 'pry-rails'
   gem 'web-console', '~> 2.0'
   gem 'prmd'
+  gem 'rspec-rails', require: false
 end
 
 gem_group :test do
-  gem 'rspec-rails', require: false
   gem 'simplecov', require: false
   gem 'simplecov-rcov', :require => false
   gem 'guard-rspec'
@@ -42,7 +42,7 @@ end
 
 create_file 'schema/meta.json' do <<-EOF
 {
-"description": "Ervice",
+"description": "Service",
 "id":"service-uu",
 "links": [{
 "href" : "https://api.esalrugs.com",
@@ -53,6 +53,7 @@ create_file 'schema/meta.json' do <<-EOF
 EOF
 end
 
+# JSON Schema
 empty_directory "schema/schemata"
 
 rakefile("schema.rake") do <<-EOF
@@ -96,6 +97,7 @@ require "action_controller/railtie"
   application do <<-RUBY
     config.assets.enabled = false
     config.generators do |g|
+      g.test_framework :rspec, fixture: true
       g.view_specs false
       g.helper_specs false
     end
@@ -107,6 +109,10 @@ require "action_controller/railtie"
   run "spring stop"
   generate "rspec:install"
   run "guard init"
+
+  # Health Check route
+  generate(:controller, "health index")
+  route "root to: 'health#index'"
 
   git :init
   git add: "."
