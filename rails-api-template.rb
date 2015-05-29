@@ -14,6 +14,8 @@ gem 'puma'
 gem 'pg'
 gem 'roar-rails'
 
+gem 'committee'
+
 gem_group :development, :test do
   gem 'spring'
   gem 'pry-rails'
@@ -37,7 +39,34 @@ copy_file ".gitignore"
 
 inside 'config' do
   remove_file 'database.yml'
-  copy_file 'database.yml'
+  create_file 'database.yml' do <<-EOF
+default: &default
+  adapter: postgresql
+  host: db 
+  port: 5432
+  pool: 5
+  timeout: 5000
+  user: postgres
+  password: postgres
+
+development:
+  <<: *default
+  database: #{app_name}_development
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  database: #{app_name}_test
+  host: 192.168.59.103
+
+production:
+  <<: *default
+  database: #{app_name}_production
+
+EOF
+  end
 end
 
 create_file 'schema/meta.json' do <<-EOF
@@ -101,10 +130,16 @@ require "action_controller/railtie"
       g.view_specs false
       g.helper_specs false
     end
+
+    # Validates the supplied and returned schema. 
+    # docs: https://github.com/interagent/committee
+    config.middleware.use Committee::Middleware::RequestValidation, schema: JSON.parse(File.read("./schema/api.json")) if File.exist?("./schema/api.json")
   RUBY
   end
 
   gsub_file 'config/environments/development.rb', /action_mailer/, ''
+
+  gsub_file 'app/controllers/application_controller.rb', /protect_from_forgery/, '# protect_from_forgery'
 
   run "spring stop"
   generate "rspec:install"
