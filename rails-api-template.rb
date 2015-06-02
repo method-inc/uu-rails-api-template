@@ -143,6 +143,9 @@ require "action_controller/railtie"
 
   run "spring stop"
   generate "rspec:install"
+  remove_file "spec/spec_helper.rb"
+  copy_file "spec_helper.rb", "spec/spec_helper.rb"
+
   run "guard init"
 
   # Health Check route
