@@ -137,7 +137,8 @@ require "action_controller/railtie"
   RUBY
   end
 
-  gsub_file 'config/environments/development.rb', /action_mailer/, ''
+  gsub_file 'config/environments/development.rb', /.*action_mailer.*\n/, ''
+  gsub_file 'config/environments/test.rb', /.*action_mailer.*\n/, ''
 
   gsub_file 'app/controllers/application_controller.rb', /protect_from_forgery/, '# protect_from_forgery'
 
