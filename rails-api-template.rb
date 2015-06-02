@@ -1,35 +1,38 @@
-
 def source_paths
-  Array(super) + 
+  Array(super) +
     [File.expand_path(File.dirname(__FILE__))]
 end
 
 remove_file "Gemfile"
 run "touch Gemfile"
-add_source 'https://rubygems.org'
-gem 'rails', '4.2.1'
-gem 'rails-api'
-gem 'puma'
+add_source "https://rubygems.org"
+gem "rails", "4.2.1"
+gem "rails-api"
+gem "puma"
 
-gem 'pg'
-gem 'roar-rails'
+gem "pg"
+gem "roar-rails"
 
-gem 'committee'
+gem "committee"
 
 gem_group :development, :test do
-  gem 'spring'
-  gem 'pry-rails'
-  gem 'web-console', '~> 2.0'
-  gem 'prmd'
-  gem 'rspec-rails', require: false
+  gem "spring"
+  gem "pry-rails"
+  gem "web-console", "~> 2.0"
+  gem "prmd"
+  gem "guard"
+  gem "rspec-rails", require: false
+  gem "guard-rspec"
+  gem "rubocop"
+  gem "rubocop-rspec"
+  gem "guard-rubocop"
 end
 
 gem_group :test do
-  gem 'simplecov', require: false
-  gem 'simplecov-rcov', :require => false
-  gem 'guard-rspec'
-  gem 'mutant'
-  gem 'mutant-rspec'
+  gem "simplecov", require: false
+  gem "simplecov-rcov", require: false
+  gem "mutant"
+  gem "mutant-rspec"
 end
 
 copy_file "Dockerfile"
@@ -37,12 +40,12 @@ copy_file "docker-compose.yml"
 remove_file ".gitignore"
 copy_file ".gitignore"
 
-inside 'config' do
-  remove_file 'database.yml'
-  create_file 'database.yml' do <<-EOF
+inside "config" do
+  remove_file "database.yml"
+  create_file "database.yml" do <<-EOF
 default: &default
   adapter: postgresql
-  host: db 
+  host: db
   port: 5432
   pool: 5
   timeout: 5000
@@ -69,7 +72,7 @@ EOF
   end
 end
 
-create_file 'schema/meta.json' do <<-EOF
+create_file "schema/meta.json" do <<-EOF
 {
 "description": "Service",
 "id":"service-uu",
@@ -86,26 +89,26 @@ end
 empty_directory "schema/schemata"
 
 rakefile("schema.rake") do <<-EOF
-require 'prmd/rake_tasks/combine'
-require 'prmd/rake_tasks/verify'
-require 'prmd/rake_tasks/doc'
+require "prmd/rake_tasks/combine"
+require "prmd/rake_tasks/verify"
+require "prmd/rake_tasks/doc"
 
 namespace :schema do
     Prmd::RakeTasks::Combine.new do |t|
-      t.options[:meta] = 'schema/meta.json'    
+      t.options[:meta] = "schema/meta.json"
       # use meta.yml if you prefer YAML format
-      t.paths << 'schema/schemata'
-      t.output_file = 'schema/api.json'
+      t.paths << "schema/schemata"
+      t.output_file = "schema/api.json"
     end
 
     Prmd::RakeTasks::Verify.new do |t|
-      t.files << 'schema/api.json'
+      t.files << "schema/api.json"
     end
 
     Prmd::RakeTasks::Doc.new do |t|
-      t.files = { 'schema/api.json' => 'schema/api.md' }
+      t.files = { "schema/api.json" => "schema/api.md" }
     end
-  task default: ['schema:combine', 'schema:verify', 'schema:doc']
+  task default: ["schema:combine", "schema:verify", "schema:doc"]
 end
 EOF
 end
@@ -115,13 +118,13 @@ after_bundle do
   remove_dir "app/mailers"
   remove_dir "test"
 
-  insert_into_file 'config/application.rb', after: "require 'rails/all'\n" do <<-RUBY
+  insert_into_file "config/application.rb", after: "require \"rails/all\"\n" do <<-RUBY
 require "active_record/railtie"
 require "action_controller/railtie"
   RUBY
   end
 
-  gsub_file 'config/application.rb', /require 'rails\/all'/, '# require "rails/all"'
+  gsub_file "config/application.rb", /require "rails\/all"/, '# require "rails/all"'
 
   application do <<-RUBY
     config.assets.enabled = false
@@ -131,27 +134,33 @@ require "action_controller/railtie"
       g.helper_specs false
     end
 
-    # Validates the supplied and returned schema. 
+    # Validates the supplied and returned schema.
     # docs: https://github.com/interagent/committee
     config.middleware.use Committee::Middleware::RequestValidation, schema: JSON.parse(File.read("./schema/api.json")) if File.exist?("./schema/api.json")
   RUBY
   end
 
-  gsub_file 'config/environments/development.rb', /.*action_mailer.*\n/, ''
-  gsub_file 'config/environments/test.rb', /.*action_mailer.*\n/, ''
+  gsub_file "config/environments/development.rb", /.*action_mailer.*\n/, ""
+  gsub_file "config/environments/test.rb", /.*action_mailer.*\n/, ""
 
-  gsub_file 'app/controllers/application_controller.rb', /protect_from_forgery/, '# protect_from_forgery'
+  gsub_file "app/controllers/application_controller.rb", /protect_from_forgery/, "# protect_from_forgery"
 
   run "spring stop"
   generate "rspec:install"
   remove_file "spec/spec_helper.rb"
   copy_file "spec_helper.rb", "spec/spec_helper.rb"
+  remove_file "spec/rails_helper.rb"
+  copy_file "rails_helper.rb", "spec/rails_helper.rb"
 
   run "guard init"
+  remove_file "Guardfile"
+  copy_file "Guardfile"
+  remove_file ".rubocop.yml"
+  copy_file "rubocop.yml", ".rubocop.yml"
 
   # Health Check route
   generate(:controller, "health index")
-  route "root to: 'health#index'"
+  route "root to: \"health#index\""
 
   git :init
   git add: "."
