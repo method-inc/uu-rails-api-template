@@ -43,7 +43,7 @@ Add the .yml files for each API resource into schema/schemata, then call `rake s
 The template also adds the [`committee`](https://github.com/interagent/committee) gem along with middleware provided by that gem to validate JSON schema against the generated JSON schema file.
 
 ## Routes
-This template adds a `/heath`  route that points to `health#index`. This is the health check endpoint that should make sure dependent servics are responding, etc. It's also known as a [canary endpoint](http://byterot.blogspot.com/2014/11/health-endpoint-in-api-design-slippery-rest-api-design-canary-endpoint-hysterix-asp-net-web-api.html). It should return JSON and be secured with an API token.
+This template adds a `/health`  route that points to `health#index`. This is the health check endpoint that should make sure dependent servics are responding, etc. It's also known as a [canary endpoint](http://byterot.blogspot.com/2014/11/health-endpoint-in-api-design-slippery-rest-api-design-canary-endpoint-hysterix-asp-net-web-api.html). It should return JSON and be secured with an API token.
 
 ## Mutant Testing
 The [mutant](https://github.com/mbj/mutant) is included to enable mutation testing. 

@@ -18,7 +18,7 @@ RSpec.configure do |config|
 
   if config.files_to_run.one?
     # Use the documentation formatter for detailed output
-    config.default_formatter = 'doc'
+    config.default_formatter = "doc"
   end
 
   # Run specs in random order to surface order dependencies
