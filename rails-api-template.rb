@@ -1,3 +1,5 @@
+require 'shellwords'
+
 def source_paths
   Array(super) +
     if __FILE__ =~ %r{\Ahttps?://}
