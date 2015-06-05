@@ -1,7 +1,38 @@
-def source_paths
-  Array(super) +
-    [File.expand_path(File.dirname(__FILE__))]
+require 'shellwords'
+#
+# Add this template directory to source_paths so that Thor actions like
+# copy_file and template resolve against our source files. If this file was
+# invoked remotely via HTTP, that means the files are not present locally.
+# In that case, use `git clone` to download them to a local temporary dir.
+# Thanks @mattbrictson!
+#
+def current_directory
+  @current_directory ||=
+    if __FILE__ =~ %r{\Ahttps?://}
+      tempdir = Dir.mktmpdir("uu-rails-api-template-")
+      at_exit { FileUtils.remove_entry(tempdir) }
+      git :clone => [
+        "--quiet",
+        "https://github.com/skookum/uu-rails-api-template.git",
+        tempdir
+      ].map(&:shellescape).join(" ")
+
+      tempdir
+    else
+      File.expand_path(File.dirname(__FILE__))
+    end
 end
+
+def source_paths
+  Array(super) + [current_directory]
+end
+#
+# Add this template directory to source_paths so that Thor actions like
+# copy_file and template resolve against our source files. If this file was
+# invoked remotely via HTTP, that means the files are not present locally.
+# In that case, use `git clone` to download them to a local temporary dir.
+
+
 
 remove_file "Gemfile"
 run "touch Gemfile"
@@ -68,7 +99,7 @@ production:
   <<: *default
   database: #{app_name}_production
 
-EOF
+  EOF
   end
 end
 
