@@ -1,7 +1,7 @@
 def source_paths
   Array(super) +
     if __FILE__ =~ %r{\Ahttps?://}
-      source_paths.unshift(tempdir = Dir.mktmpdir("uu-rails-api-template-"))
+      tempdir = Dir.mktmpdir("uu-rails-api-template-")
       at_exit { FileUtils.remove_entry(tempdir) }
       git :clone => [
         "--quiet",
