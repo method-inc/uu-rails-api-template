@@ -1,7 +1,13 @@
 require 'shellwords'
-
-def source_paths
-  Array(super) +
+#
+# Add this template directory to source_paths so that Thor actions like
+# copy_file and template resolve against our source files. If this file was
+# invoked remotely via HTTP, that means the files are not present locally.
+# In that case, use `git clone` to download them to a local temporary dir.
+# Thanks @mattbrictson!
+#
+def current_directory
+  @current_directory ||=
     if __FILE__ =~ %r{\Ahttps?://}
       tempdir = Dir.mktmpdir("uu-rails-api-template-")
       at_exit { FileUtils.remove_entry(tempdir) }
@@ -11,16 +17,21 @@ def source_paths
         tempdir
       ].map(&:shellescape).join(" ")
 
-      [tempdir]
+      tempdir
     else
-      [File.expand_path(File.dirname(__FILE__))]
+      File.expand_path(File.dirname(__FILE__))
     end
+end
+
+def source_paths
+  Array(super) + [current_directory]
 end
 #
 # Add this template directory to source_paths so that Thor actions like
 # copy_file and template resolve against our source files. If this file was
 # invoked remotely via HTTP, that means the files are not present locally.
 # In that case, use `git clone` to download them to a local temporary dir.
+
 
 
 remove_file "Gemfile"
