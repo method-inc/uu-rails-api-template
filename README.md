@@ -14,11 +14,16 @@ A `Dockerfile` and `docker-compose.yml` are included in the generated app.
 
 ## How to Use
 
+    rails new service_name -m https://raw.githubusercontent.com/Skookum/uu-rails-api-template/master/rails-api-template.rb
+
+or
+
     rails new service_name -m <path-to>/rails-api-template.rb
 
 or 
 
     rails-api new service_name -m <path-to>/rails-api-template.rb
+
 
 Once the app exists
 
@@ -48,9 +53,6 @@ This template adds a `/health`  route that points to `health#index`. This is the
 ## Mutant Testing
 The [mutant](https://github.com/mbj/mutant) is included to enable mutation testing. 
 
-## Gotchas
-
-* You'll need to clone this repository to use it, since I decided to use local files to copy over. This could be fixed by included the file content in the template.
 
 ## TODO
 * Document mutation testing command/flow
