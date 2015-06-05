@@ -2,6 +2,8 @@ def source_paths
   Array(super) +
     [File.expand_path(File.dirname(__FILE__))]
 end
+
+require "shellwords"
 #
 # Add this template directory to source_paths so that Thor actions like
 # copy_file and template resolve against our source files. If this file was
