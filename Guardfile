@@ -43,7 +43,7 @@ group :tdd, halt_on_fail: true do
   end
 
   guard :rubocop, all_on_start: false, cmd: "rubocop --require rubocop-rspec" do
-    watch(%r{.+\.rb$})
+    watch(%r{.+\.rb$}) { |m| m[0] }
     watch(%r{(?:.+/)?\.rubocop\.yml$}) { |m| File.dirname(m[0]) }
   end
 end
