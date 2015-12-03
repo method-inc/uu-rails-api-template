@@ -1,26 +1,25 @@
-FROM ruby:2.2.2
+FROM alpine:3.2
+MAINTAINER Glenn Goodrich <glenn.goodrich@skookum.com>
 
-RUN apt-get update -yqq && apt-get install -y build-essential
+ENV BUILD_PACKAGES curl-dev ruby-dev build-base openssl-dev libxml2-dev libxslt-dev libgcrypt libffi-dev git ncurses tzdata postgresql-dev xvfb
+ENV RUBY_PACKAGES ruby ruby-irb ruby-json ruby-rake ruby-io-console ruby-bundler ruby-bigdecimal nodejs
+
+# Update the package manager
+RUN apk update && \
+    apk upgrade && \
+    apk add bash $BUILD_PACKAGES && \
+    apk add bash $RUBY_PACKAGES && \
+    rm -rf /var/cache/apk/*
 
 EXPOSE 3000
-
-# for postgres
-RUN apt-get install -y libpq-dev
-
-# for nokogiri
-RUN apt-get install -y libxml2-dev libxslt1-dev
-# for capybara-webkit
-RUN apt-get install -y libqt4-webkit libqt4-dev xvfb
-
-# for a JS runtime
-RUN apt-get install -y nodejs
-
-RUN mkdir /app
 
 WORKDIR /tmp
 COPY Gemfile Gemfile
 ADD Gemfile.lock Gemfile.lock
+RUN bundle config build.nokogiri --use-system-libraries
 RUN bundle install
+
+RUN mkdir /app
 
 ADD . /app
 WORKDIR /app

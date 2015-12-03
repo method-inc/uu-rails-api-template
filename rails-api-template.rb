@@ -43,6 +43,7 @@ gem "puma"
 
 gem "pg"
 gem "roar-rails"
+gem "multi_json"
 
 gem "committee"
 
